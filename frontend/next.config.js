@@ -1,10 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // output: 'export',
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: { unoptimized: true },
+// next.config.js
+webpack: (config) => {
+  config.module.rules.push({
+    test: /HeartbeatWorker\.js$/,
+    use: "null-loader",
+  });
+  return config;
 };
-
-module.exports = nextConfig;

@@ -172,7 +172,7 @@ export function ConnectedState() {
                     Your wallet secures your private key to unlock records.
                   </p>
                   <p className="text-sm text-[#3D3D3D]">
-                    We don't store your data.
+                    We don&apos;t store your data.
                   </p>
                 </div>
               </motion.div>

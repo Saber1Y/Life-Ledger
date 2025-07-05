@@ -93,7 +93,7 @@ const AuditPage = () => {
 					{/* Campaign Message */}
 					<div className='bg-gray-50 rounded-lg p-4 mb-6 lg-max-w-[618px] xl:max-w-[618px]'>
 						<p className='text-gray-700 text-sm leading-relaxed'>
-							Hi, I'm Keith. I was recently diagnosed with a kidney condition
+							Hi, I&apos;m Keith. I was recently diagnosed with a kidney condition
 							and need help covering my lab tests and medication. Any amount you
 							gives goes directly to my wallet. Thank you for your support.
 						</p>

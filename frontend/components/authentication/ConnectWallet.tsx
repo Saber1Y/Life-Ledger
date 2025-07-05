@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export function ConnectWallet() {
   return (
@@ -89,7 +90,7 @@ export function ConnectWallet() {
                 transition={{ duration: 0.6, delay: 0.8 }}
                 className="pt-4"
               >
-               <w3m-button />
+                <ConnectButton />
               </motion.div>
 
               {/* Security notice */}
@@ -114,7 +115,7 @@ export function ConnectWallet() {
                     Your wallet secures your private key to unlock records.
                   </p>
                   <p className="text-sm text-[#3D3D3D]">
-                    We don't store your data.
+                    We don&apos;t store your data.
                   </p>
                 </div>
               </motion.div>

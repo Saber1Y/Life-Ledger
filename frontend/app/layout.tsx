@@ -1,8 +1,5 @@
-export const dynamic = "force-dynamic";
-
 import "./globals.css";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { DM_Sans } from "next/font/google";
 import ContextProvider from "@/app/context";
 
@@ -21,8 +18,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookies = headers().get("cookie");
-
   return (
     <html lang="en">
       <body className={dmSans.className}>

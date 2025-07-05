@@ -79,7 +79,7 @@ export function WelcomeScreen({ onConnect }: WelcomeScreenProps) {
               </div>
               <div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Your wallet secures your private key to unlock records. We don't store your data.
+                  Your wallet secures your private key to unlock records. We don&apos;t store your data.
                 </p>
               </div>
             </div>

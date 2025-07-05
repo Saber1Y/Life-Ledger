@@ -61,7 +61,6 @@ export const HeroBanner = () => {
     abi: recordRegistoryABI,
     functionName: "getRecords",
     args: [address ?? "0x0000000000000000000000000000000000000000"],
-    enabled: !!address,
   });
 
   useEffect(() => {
