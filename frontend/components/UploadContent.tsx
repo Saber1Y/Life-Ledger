@@ -9,11 +9,8 @@ import {
   recordRegistoryABI,
   RECORD_REGISTORY_ADDR,
 } from "@/app/context/ContractData";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useWriteContract } from "wagmi";
 import { useCid } from "@/app/context/CidContext";
-
-
 
 export const UploadContent = () => {
   const [fileName, setFileName] = useState("Annual checkup");
@@ -249,12 +246,7 @@ export const UploadContent = () => {
             />
           </div>
 
-          {/* Upload Button */}
-          <div className="flex justify-end">
-            <button className="bg-[#2596BE] hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors w-full sm:w-auto">
-              Upload
-            </button>
-          </div>
+         
         </div>
       </div>
     </div>

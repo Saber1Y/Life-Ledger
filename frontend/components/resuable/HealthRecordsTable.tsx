@@ -59,12 +59,13 @@ export const HealthRecordsTable = () => {
                   process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY!,
               },
             }
-          );
+          );  
 
           const meta = res.data?.PinataMetadata;
           fileName = meta?.name ?? "";
           fileType = meta?.keyvalues?.fileType ?? "";
           notes = meta?.keyvalues?.notes ?? "";
+          console.log("Metadata response for", cid, meta);
         } catch {
           console.warn(`No metadata for CID ${cid}`);
         }
