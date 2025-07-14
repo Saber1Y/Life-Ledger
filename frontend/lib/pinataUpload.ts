@@ -3,7 +3,6 @@ import axios from "axios";
 interface Meta {
   fileName: string;
   fileType: string;
-  notes?: string;
 }
 
 export const uploadToPinata = async (
@@ -18,7 +17,6 @@ export const uploadToPinata = async (
       name: metadata.fileName,
       keyvalues: {
         fileType: metadata.fileType,
-        notes: metadata.notes,
       },
     })
   );

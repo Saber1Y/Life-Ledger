@@ -47,25 +47,22 @@ export const HealthRecordsTable = () => {
         const cid = cids[i];
         let fileName = "";
         let fileType = "";
-        let notes = "";
 
         try {
           const res = await axios.get(
             `https://api.pinata.cloud/pinning/hashMetadata/${cid}`,
             {
               headers: {
-                pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
-                pinata_secret_api_key:
-                  process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY!,
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT!}`,
               },
             }
-          );  
+          );
 
           const meta = res.data?.PinataMetadata;
           fileName = meta?.name ?? "";
           fileType = meta?.keyvalues?.fileType ?? "";
-          notes = meta?.keyvalues?.notes ?? "";
           console.log("Metadata response for", cid, meta);
+          console.log("🔍 Pinata metadata response for", cid, res.data);
         } catch {
           console.warn(`No metadata for CID ${cid}`);
         }
@@ -75,11 +72,11 @@ export const HealthRecordsTable = () => {
           cid,
           fileName,
           fileType,
-          notes,
           dateUploaded: new Date().toISOString().slice(0, 10),
         });
       }
 
+      console.log("✅ Final records array:", arr);
       setRecords(arr);
     };
 
@@ -121,20 +118,18 @@ export const HealthRecordsTable = () => {
                 <th>Type</th>
                 <th>Date</th>
                 <th>CID</th>
-                <th>Notes</th>
                 <th>View</th>
               </tr>
             </thead>
             <tbody>
               {records.map(
-                ({ id, cid, fileName, fileType, notes, dateUploaded }) => (
+                ({ id, cid, fileName, fileType,dateUploaded }) => (
                   <tr key={id} className="border-b hover:bg-gray-100">
                     <td className="px-2">{id}</td>
-                    <td className="px-2">{fileName}</td>
-                    <td className="px-2">{fileType}</td>
+                    <td className="px-2">{fileName || "-"}</td>
+                    <td className="px-2">{fileType || "-"}</td>
                     <td className="px-2">{dateUploaded}</td>
                     <td className="px-2 truncate max-w-xs">{cid}</td>
-                    <td className="px-2">{notes}</td>
                     <td className="px-2">
                       <a
                         href={`https://ipfs.io/ipfs/${cid}`}

@@ -16,7 +16,6 @@ export const UploadContent = () => {
   const [fileName, setFileName] = useState("Annual checkup");
   const [fileType, setFileType] = useState("Laboratory Results");
   const [selectedDate, setSelectedDate] = useState("");
-  const [notes, setNotes] = useState("Optional but recommended");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,7 +63,6 @@ export const UploadContent = () => {
       const cid = await uploadToPinata(file, {
         fileName,
         fileType,
-        notes,
       });
       await writeContractAsync({
         address: RECORD_REGISTORY_ADDR,
@@ -224,29 +222,6 @@ export const UploadContent = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Right Section - Notes and Upload Button */}
-        <div className="lg:col-span-1 space-y-4">
-          {/* Notes */}
-          <div>
-            <label
-              htmlFor="notes"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Notes
-            </label>
-            <textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={6}
-              className="w-full lg:max-w-[373px] xl:max-w-[373px] px-4 h-[300px] py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600 resize-none"
-              placeholder="Optional but recommended"
-            />
-          </div>
-
-         
         </div>
       </div>
     </div>
