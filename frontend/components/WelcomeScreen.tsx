@@ -34,7 +34,7 @@ export function WelcomeScreen({ onConnect }: WelcomeScreenProps) {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-4xl lg:text-5xl font-bold text-center mb-4"
             >
-              Welcome to Life Ledgers
+              Welcome to Life Ledger
             </motion.h1>
             <motion.p
               initial={{ y: 20, opacity: 0 }}
@@ -63,14 +63,14 @@ export function WelcomeScreen({ onConnect }: WelcomeScreenProps) {
             </p>
           </div>
 
-          <Button
+          {/* <Button
             onClick={onConnect}
             size="lg"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105"
           >
             <Plus className="w-5 h-5 mr-2" />
             Connect Wallet
-          </Button>
+          </Button> */}
 
           <div className="bg-blue-50/10 backdrop-blur-sm rounded-xl p-6 border border-white/10">
             <div className="flex items-start space-x-3">

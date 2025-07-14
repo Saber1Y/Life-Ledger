@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Copy, LogOut, Edit3, User } from "lucide-react";
 import Image from "next/image";
 import { AnimatedBackground } from "../AnimatedBackground";
 import Link from "next/link";
@@ -110,14 +109,14 @@ export function ConnectedState() {
                   transition={{ duration: 0.4, delay: 0.6 }}
                   className="w-full bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-center space-x-4 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 transform hover:scale-[1.02] group shadow-sm"
                 >
-                  <span className="flex items-center font-medium text-gray-900">
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center justify-center"
-                    >
+                  <Link
+                    className="flex items-center font-medium text-gray-900"
+                    href="/dashboard"
+                  >
+                    <span className="flex items-center justify-center">
                       Proceed to Dashboard
-                    </Link>
-                  </span>
+                    </span>
+                  </Link>
                 </motion.button>
 
                 <motion.button

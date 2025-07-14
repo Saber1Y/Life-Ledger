@@ -8,7 +8,9 @@ import {
   recordRegistoryABI,
   RECORD_REGISTORY_ADDR,
 } from "@/app/context/ContractData";
-import { useAccount, useReadContract,  useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { ConnectWallet } from "@/components/authentication/ConnectWallet";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface HealthRecord {
   id: number;
@@ -26,7 +28,11 @@ export const HealthRecordsTable = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { writeContractAsync } = useWriteContract();
 
-  const { data: onChainRecords, refetch, isLoading: fetchingRecords } = useReadContract({
+  const {
+    data: onChainRecords,
+    refetch,
+    isLoading: fetchingRecords,
+  } = useReadContract({
     address: RECORD_REGISTORY_ADDR,
     abi: recordRegistoryABI,
     functionName: "getRecords",
@@ -81,8 +87,13 @@ export const HealthRecordsTable = () => {
 
   if (!address) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <p className="text-center text-gray-600">Please connect your wallet to view and upload health records.</p>
+      <div className="p-6 mx-auto flex flex-col gap-3">
+        <p className=" text-gray-600">
+          Please connect your wallet to view and upload health records.
+        </p>
+        <span className="mt-5 text-center">
+          <ConnectButton />
+        </span>
       </div>
     );
   }
@@ -90,7 +101,9 @@ export const HealthRecordsTable = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
-        <h3 className="text-2xl font-semibold mb-4">Upload your record and get them anytime</h3>
+        <h3 className="text-2xl font-semibold mb-4">
+          Upload your record and get them anytime
+        </h3>
         <button
           onClick={handleUploadClick}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2"
@@ -106,7 +119,9 @@ export const HealthRecordsTable = () => {
           accept=".pdf,.doc,.jpg,.png,.jpeg,.json"
         />
         {loading && <p className="text-sm mt-2 text-gray-600">Uploading...</p>}
-        {success && <p className="text-sm mt-2 text-green-600">Uploaded successfully!</p>}
+        {success && (
+          <p className="text-sm mt-2 text-green-600">Uploaded successfully!</p>
+        )}
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
