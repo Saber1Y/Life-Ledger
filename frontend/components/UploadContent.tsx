@@ -13,9 +13,7 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useCid } from "@/app/context/CidContext";
 
-interface fileType {
-  file: File;
-}
+
 
 export const UploadContent = () => {
   const [fileName, setFileName] = useState("Annual checkup");
@@ -66,7 +64,11 @@ export const UploadContent = () => {
     setSuccess(false);
 
     try {
-      const cid = await uploadToPinata(file);
+      const cid = await uploadToPinata(file, {
+        fileName,
+        fileType,
+        notes,
+      });
       await writeContractAsync({
         address: RECORD_REGISTORY_ADDR,
         abi: recordRegistoryABI,

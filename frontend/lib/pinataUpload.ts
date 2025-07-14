@@ -1,8 +1,27 @@
 import axios from "axios";
 
-export const uploadToPinata = async (file: File): Promise<string> => {
+interface Meta {
+  fileName: string;
+  fileType: string;
+  notes?: string;
+}
+
+export const uploadToPinata = async (
+  file: File,
+  metadata: Meta
+): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append(
+    "pinataMetadata",
+    JSON.stringify({
+      name: metadata.fileName,
+      keyvalues: {
+        fileType: metadata.fileType,
+        notes: metadata.notes,
+      },
+    })
+  );
 
   const res = await axios.post(
     "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -16,5 +35,5 @@ export const uploadToPinata = async (file: File): Promise<string> => {
     }
   );
 
-  return res.data.IpfsHash; 
+  return res.data.IpfsHash;
 };
