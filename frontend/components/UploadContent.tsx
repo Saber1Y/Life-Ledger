@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 import { useState, useRef } from "react";
-import { Upload, FileText, Plus, Calendar } from "lucide-react";
+
 //contract related imports
 import { uploadToPinata } from "@/lib/pinataUpload";
 import {

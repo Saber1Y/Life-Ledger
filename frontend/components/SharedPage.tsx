@@ -1,182 +1,163 @@
 "use client";
-
+import { useState, useEffect } from "react";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import {
-	FolderOpen,
-	Download,
-	Share2,
-	UserMinus,
-	User,
-	DownloadIcon,
-	UploadIcon,
-} from "lucide-react";
-import Image from "next/image";
+  controlManagerABI,
+  RECORD_REGISTORY_ADDR,
+} from "@/app/context/ContractData";
+import { DownloadIcon, UploadIcon } from "lucide-react";
 import { DashboardLayout } from "./layout/DashboardLayout";
+import Axios from "axios";
 
-const SharedPage = () => {
-	const auditLogItems = [
-		{
-			id: 1,
-			type: "user",
-			user: {
-				name: "Dr. Grey",
-				avatar: "/images/doctor-avatar.png", // Replace with actual avatar path
-			},
-			action: "View only",
-			date: "2 days ago",
-			status: "Current status: Shared Access",
-			icon: User,
-		},
-		{
-			id: 2,
-			type: "download",
-			action: "Record downloaded",
-			date: "25-05-2025",
-			icon: DownloadIcon,
-		},
-		{
-			id: 3,
-			type: "user",
-			user: {
-				name: "Dr. Grey",
-				avatar: "/images/doctor-avatar.png", // Replace with actual avatar path
-			},
-			action: "View only",
-			date: "01-06-2025",
-			status: "Current status: Revoke Access",
-			icon: User,
-		},
-		{
-			id: 4,
-			type: "upload",
-			action: "Record uploaded",
-			date: "20-04-2025",
-			icon: UploadIcon,
-		},
-	];
+interface RecordMetaData {
+  cid: string;
+  fileName: string;
+  fileType: string;
+  dateUploaded: string;
+}
 
-	return (
-		<DashboardLayout activeItem='shared-access'>
-			<div className='p-6 lg:p-8'>
-				{/* Record Details Header */}
-				<div className='mb-8'>
-					<h1 className='text-2xl font-bold text-gray-900 mb-6'>
-						Record Details
-					</h1>
+// Props:
+// - patientAddress: the address of the patient whose record is being viewed
+// - cid: the CID of the file
+const SharedPage = ({
+  patientAddress,
+  cid,
+}: {
+  patientAddress: string;
+  cid: string;
+}) => {
+  const { address: providerAddress } = useAccount();
+  const [metaData, setMetaData] = useState<RecordMetaData | null>();
 
-					{/* Record Info Card */}
-					<div className='rounded-xl  mb-6'>
-						<div className='flex items-start space-x-4'>
-							<Image
-								src='/images/folder_1.png'
-								alt='Shared Access'
-								width={32}
-								height={32}
-							/>
+  useEffect(() => {
+    async function fetchMetaData() {
+      try {
+        const response = await Axios.get(
+          `https://api.pinata.cloud/pinning/hashMetadata/${cid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT!}`,
+            },
+          }
+        );
 
-							<div className='flex-1'>
-								<h2 className='text-xl font-semibold text-gray-900 mb-4'>
-									General Blood Test
-								</h2>
+        const fetchedMetaData = response.data.PinataMetaData;
+        setMetaData({
+          cid,
+          fileName: fetchedMetaData.name || "Unamed File",
+          fileType: fetchedMetaData.keyvalues?.fileType || "unamed FileType",
+          dateUploaded:
+            fetchedMetaData.data.date || new Date().toISOString().slice(0, 10),
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-								<div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4'>
-									<div>
-										<span className='font-medium'>Type:</span> Laboratory Test
-									</div>
-									<div>
-										<span className='font-medium'>Date:</span> 20th April, 2025
-									</div>
-									<div>
-										<span className='font-medium'>Size:</span> 3MB
-									</div>
-								</div>
+    fetchMetaData();
+  }, [cid]);
 
-								{/* Status Badges */}
-								<div className='flex flex-wrap items-center gap-3 mb-6'>
-									<div className='flex items-center space-x-2'>
-										<div className='w-2 h-2 bg-green-500 rounded-full'></div>
-										<span className='text-sm text-[#3A3A3A]'>Encrypted</span>
-									</div>
-									<div className='flex items-center space-x-2'>
-										<span className='text-sm text-[#3A3A3A]'>On Chain</span>
-									</div>
-									<button className='text-sm text-[#3A3A3A] font-medium'>
-										View AI summary
-									</button>
-								</div>
+  // 🚦 Check current access
+  const { data: hasAccess, refetch } = useReadContract({
+    address: RECORD_REGISTORY_ADDR,
+    abi: controlManagerABI,
+    functionName: "hasAccess",
+    args: [patientAddress, providerAddress as string],
+    query: { enabled: !!providerAddress && !!patientAddress },
+  });
 
-								{/* Action Buttons */}
-								<div className='flex flex-wrap gap-3'>
-									<button className='px-6 py-4 bg-[#2596BE]  text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2'>
-										<span>Share Access</span>
-									</button>
-									<button className='px-6 py-2 bg-[#B0B0B0] text-white rounded-lg hover:bg-gray-300 transition-colors flex items-center space-x-2'>
-										<span>Revoke Access</span>
-									</button>
-									<button className='px-6 py-2 bg-[#B0B0B0]  text-white rounded-lg hover:bg-gray-300 transition-colors flex items-center space-x-2'>
-										<span>Download</span>
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+  // 🖊️ Grant and revoke access
+  const { writeContractAsync: grantAccess } = useWriteContract();
 
-				{/* View Audit Log */}
-				<div>
-					<h2 className='text-xl font-semibold text-gray-900 mb-6'>
-						View Audit Log
-					</h2>
+  const { writeContractAsync: revokeAccess } = useWriteContract();
 
-					<div className='space-y-4'>
-						{auditLogItems.map((item) => (
-							<div key={item.id} className='flex items-start space-x-4  '>
-								{/* Icon/Avatar */}
-								<div className='flex-shrink-0'>
-									{item.type === "user" ? (
-										<div className='w-12 h-12 bg-gray-100  border border-[#215E7D] rounded-full flex items-center justify-center overflow-hidden'>
-											{/* Replace with actual avatar or user icon */}
-											<User className='w-6 h-6 text-gray-600' />
-										</div>
-									) : (
-										<div className='w-12 h-12 border border-[#215E7D] bg-[#2596BE] rounded-full flex items-center justify-center'>
-											<item.icon className='w-6 h-6 text-white' />
-										</div>
-									)}
-								</div>
+  // 🧠 Action handlers
+  //   const handleGrant = async () => {
+  //     await grantAccess({ args: [providerAddress] });
+  //     refetch();
+  //   };
 
-								{/* Content */}
-								<div className='flex-1 min-w-0'>
-									{item.type === "user" && item.user ? (
-										<div>
-											<div className='flex items-center space-x-2 mb-1'>
-												<h3 className='font-semibold text-gray-900'>
-													{item.user.name}
-												</h3>
-											</div>
-											<div className='flex flex-wrap items-center gap-4 text-sm text-gray-600'>
-												<span>{item.action}</span>
-												<span>{item.date}</span>
-												{item.status && (
-													<span className='text-[#3D3D3D]'>{item.status}</span>
-												)}
-											</div>
-										</div>
-									) : (
-										<div>
-											<h3 className='font-semibold text-gray-900 mb-1'>
-												{item.action}
-											</h3>
-											<span className='text-sm text-gray-600'>{item.date}</span>
-										</div>
-									)}
-								</div>
-							</div>
-						))}
-					</div>
-				</div>
-			</div>
-		</DashboardLayout>
-	);
+  //   const handleRevoke = async () => {
+  //     await revokeAccess({ args: [providerAddress] });
+  //     refetch();
+  //   };
+
+  return (
+    <DashboardLayout activeItem="shared-access">
+      <div className="p-6 lg:p-8 space-y-8">
+        {/* Record details once metadata is loaded */}
+        {metaData ? (
+          <div className="rounded-xl bg-white shadow p-6 flex items-start space-x-4">
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold">{metaData.fileName}</h2>
+              <div className="text-sm text-gray-600 mt-2 space-y-1">
+                <div>
+                  <strong>Type:</strong> {metaData.fileType}
+                </div>
+                <div>
+                  <strong>Date:</strong> {metaData.dateUploaded}
+                </div>
+                <div>
+                  <strong>CID:</strong> {cid}
+                </div>
+              </div>
+
+              {/* Access status & action buttons */}
+              {/* <div className="mt-4 space-y-1">
+                <div>
+                  {hasAccess ? (
+                    <span className="text-green-600 font-medium">
+                      🔓 Access Granted
+                    </span>
+                  ) : (
+                    <span className="text-red-600 font-medium">
+                      🔒 No Access
+                    </span>
+                  )}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  <button
+                    onClick={handleGrant}
+                    disabled={hasAccess || granting}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                  >
+                    {granting ? "Granting…" : "Share Access"}
+                  </button>
+                  <button
+                    onClick={handleRevoke}
+                    disabled={!hasAccess || revoking}
+                    className="px-6 py-2 bg-gray-500 text-white rounded-lg disabled:opacity-50"
+                  >
+                    {revoking ? "Revoking…" : "Revoke Access"}
+                  </button>
+                  {hasAccess && (
+                    <a
+                      href={`https://ipfs.io/ipfs/${cid}`}
+                      className="inline-flex items-center px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                    >
+                      <DownloadIcon className="mr-2" />
+                      Download
+                    </a>
+                  )}
+                </div>
+              </div> */}
+            </div>
+          </div>
+        ) : (
+          <p>Loading record details…</p>
+        )}
+
+        {/* Audit log */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Audit Log</h2>
+          {/* You’ll want to fetch this dynamically from your contract or backend */}
+          <p className="text-gray-500">
+            Audit history will be displayed here...
+          </p>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
 };
 
 export default SharedPage;
