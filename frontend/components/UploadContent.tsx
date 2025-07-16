@@ -13,8 +13,8 @@ import { useAccount, useWriteContract } from "wagmi";
 import { useCid } from "@/app/context/CidContext";
 
 export const UploadContent = () => {
-  const [fileName, setFileName] = useState("Annual checkup");
-  const [fileType, setFileType] = useState("Laboratory Results");
+  const [fileName, setFileName] = useState("");
+  const [fileType, setFileType] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,11 +59,14 @@ export const UploadContent = () => {
     setError(true);
     setSuccess(false);
 
+    console.log("Uploading file with metadata:", { fileName, fileType });
+
     try {
       const cid = await uploadToPinata(file, {
         fileName,
         fileType,
       });
+      console.log("Uploaded CID:", cid);
       await writeContractAsync({
         address: RECORD_REGISTORY_ADDR,
         abi: recordRegistoryABI,

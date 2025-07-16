@@ -53,7 +53,7 @@ export const HealthRecordsTable = () => {
             `https://api.pinata.cloud/pinning/hashMetadata/${cid}`,
             {
               headers: {
-                Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT!}`,
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
               },
             }
           );
@@ -61,8 +61,6 @@ export const HealthRecordsTable = () => {
           const meta = res.data?.PinataMetadata;
           fileName = meta?.name ?? "";
           fileType = meta?.keyvalues?.fileType ?? "";
-          console.log("Metadata response for", cid, meta);
-          console.log("🔍 Pinata metadata response for", cid, res.data);
         } catch {
           console.warn(`No metadata for CID ${cid}`);
         }
@@ -119,30 +117,36 @@ export const HealthRecordsTable = () => {
                 <th>Date</th>
                 <th>CID</th>
                 <th>View</th>
+                <th>Access</th>
               </tr>
             </thead>
             <tbody>
-              {records.map(
-                ({ id, cid, fileName, fileType,dateUploaded }) => (
-                  <tr key={id} className="border-b hover:bg-gray-100">
-                    <td className="px-2">{id}</td>
-                    <td className="px-2">{fileName || "-"}</td>
-                    <td className="px-2">{fileType || "-"}</td>
-                    <td className="px-2">{dateUploaded}</td>
-                    <td className="px-2 truncate max-w-xs">{cid}</td>
-                    <td className="px-2">
-                      <a
-                        href={`https://ipfs.io/ipfs/${cid}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        View
-                      </a>
-                    </td>
-                  </tr>
-                )
-              )}
+              {records.map(({ id, cid, fileName, fileType, dateUploaded }) => (
+                <tr key={id} className="border-b hover:bg-gray-100">
+                  <td className="px-4">{id}</td>
+                  <td className="px-4">{fileName || "-"}</td>
+                  <td className="px-4">{fileType || "-"}</td>
+                  <td className="px-4">{dateUploaded}</td>
+                  <td className="px-4 truncate max-w-xs">{cid}</td>
+                  <td className="px-4">
+                    <a
+                      href={`https://ipfs.io/ipfs/${cid}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      View
+                    </a>
+                  </td>
+                  <td
+                    className="text-blue-600 hover:underline cursor-pointer"
+                    key={id}
+                    onClick={() => router.push(`shared/${cid}`)}
+                  >
+                    Grant Access
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

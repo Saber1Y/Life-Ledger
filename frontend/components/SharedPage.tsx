@@ -7,7 +7,8 @@ import {
 } from "@/app/context/ContractData";
 import { DownloadIcon, UploadIcon } from "lucide-react";
 import { DashboardLayout } from "./layout/DashboardLayout";
-import Axios from "axios";
+import axios from "axios";
+import { useCid } from "@/app/context/CidContext";
 
 interface RecordMetaData {
   cid: string;
@@ -19,20 +20,17 @@ interface RecordMetaData {
 // Props:
 // - patientAddress: the address of the patient whose record is being viewed
 // - cid: the CID of the file
-const SharedPage = ({
-  patientAddress,
-  cid,
-}: {
-  patientAddress: string;
-  cid: string;
-}) => {
+const SharedPage = ({ patientAddress }: { patientAddress: string }) => {
   const { address: providerAddress } = useAccount();
   const [metaData, setMetaData] = useState<RecordMetaData | null>();
+
+  const { cid } = useCid();
+  console.log(cid);
 
   useEffect(() => {
     async function fetchMetaData() {
       try {
-        const response = await Axios.get(
+        const response = await axios.get(
           `https://api.pinata.cloud/pinning/hashMetadata/${cid}`,
           {
             headers: {
@@ -40,7 +38,7 @@ const SharedPage = ({
             },
           }
         );
-
+        console.log("metadata here:", response.data.PinataMetaData);
         const fetchedMetaData = response.data.PinataMetaData;
         setMetaData({
           cid,
