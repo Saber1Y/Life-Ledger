@@ -1,6 +1,6 @@
 # 🧬 LifeLedger — Decentralized Health Record Registry
 
-LifeLedger is a decentralized health record registry system built using smart contracts, IPFS/Filecoin for storage, and deployed on the **Polygon Amoy Testnet**. It enables patients to securely store medical records and grant/revoke access to healthcare providers.
+LifeLedger is a decentralized health record registry system built using smart contracts, IPFS/Filecoin for storage, and deployed on the **Base Mainnet**. It enables patients to securely store medical records and grant/revoke access to healthcare providers.
 
 ---
 
@@ -9,18 +9,18 @@ LifeLedger is a decentralized health record registry system built using smart co
 - **On-chain Access Control**: Patients can grant or revoke access to their medical data.
 - **IPFS-based Storage**: Records are stored off-chain using IPFS/Filecoin (via Web3.Storage) and referenced by CID.
 - **Key-Based Record Mapping**: Records are stored and retrieved using hashed keys for secure access.
-- **EVM-Compatible Deployment**: Deployed using Foundry on Etheruem Sepolia Testnet.
+- **EVM-Compatible Deployment**: Deployed using Foundry on Base Mainnet.
 - **Scalable & Open**: Modular architecture that supports adding more roles (AI agents, orgs, etc).
 
 ---
 
 ## 🧱 Smart Contracts
 
-- `AccessControlManager.sol`:  
+- `ControlManger.sol`:  
   Manages which providers or agents have access to a patient’s records. Built with a nested mapping structure.
 
 - `RecordRegistory.sol`:  
-  Stores IPFS CIDs representing patient medical records. Supports multiple records per patient with potential for hashed key mapping.
+  Stores IPFS CIDs representing patient medical records. Supports multiple records per patient.
 
 ---
 
@@ -28,7 +28,7 @@ LifeLedger is a decentralized health record registry system built using smart co
 
 - **Solidity 0.8.24** – smart contract development
 - **Foundry** – contract scripting, testing, and deployment
-- **Etheruem Sepolia ** – blockchain environment
+- **Base Mainnet** – blockchain environment
 - **Web3.Storage** – IPFS + Filecoin storage solution
 - **MetaMask** – wallet for signing and managing accounts
 
@@ -40,19 +40,26 @@ LifeLedger is a decentralized health record registry system built using smart co
 
 ### Compiler
 
-- Using **Solidity v0.8.24** to ensure compatibility with Amoy (EIP-3855 not fully supported on 0.8.20+)
+- Using **Solidity v0.8.24** for compatibility with Base Mainnet
 
 ### Foundry Configuration
 
 - `foundry.toml` includes:
-  - RPC endpoint for Etheruem Sepolia
-  - solc_version = "0.8.24
+  - RPC endpoint for Base Mainnet
+  - solc_version = "0.8.24"
   - Broadcast settings via `PRIVATE_KEY`
 
 ### Deployment Flow
 
 1. Compile and simulate contract deployments via Foundry
-2. Broadcast to Amoy using:
+2. Broadcast to Base Mainnet using:
+
+   ```shell
+   forge script script/DeployContracts.s.sol:DeployContract \
+     --rpc-url $BASE_RPC_URL \
+     --private-key $PRIVATE_KEY \
+     --broadcast
+   ```
 
 3. Record addresses from `console.log` or `broadcast/*.json` files
 
@@ -68,21 +75,20 @@ LifeLedger is a decentralized health record registry system built using smart co
 
 ## 🌍 Network Details
 
-- **Chain**: Etheruem Sepolia testnet
-- **Chain ID**: 11155111
-- **RPC**: `https://sepolia.infura.io/v3/b26f468efd8b4ec299c070e46c280a9c`
-- **FAUCET**: `https://sepoliafaucet.com`
-- **Explorer**: `https://sepolia.etherscan.io`
+- **Chain**: Base Mainnet
+- **Chain ID**: 8453
+- **RPC**: `https://mainnet.base.org`
+- **Explorer**: `https://basescan.org`
 
 ---
 
 ## 🧩 Future Extensions
 
-- Connect `RecordRegistory` directly to `AccessControlManager`
+- Connect `RecordRegistory` directly to `ControlManger` for access checks
 - Build a frontend to:
-- Upload files to IPFS
-- Grant/revoke access via MetaMask
-- View stored records based on permissions
+  - Upload files to IPFS
+  - Grant/revoke access via MetaMask
+  - View stored records based on permissions
 - Add encryption before uploading files to IPFS
 - Index CIDs off-chain for UI improvements
 
@@ -92,7 +98,7 @@ LifeLedger is a decentralized health record registry system built using smart co
 
 - 🧱 Solidity
 - 💻 Foundry
-- 🔗 Sepolia ETH
+- 🔗 Base Mainnet
 - 🦊 MetaMask
 - ✍️ Saber YT
 
@@ -146,7 +152,7 @@ $ anvil
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/DeployContracts.s.sol:DeployContract --rpc-url $BASE_RPC_URL --private-key $PRIVATE_KEY --broadcast
 ```
 
 ### Cast
